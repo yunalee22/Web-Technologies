@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Homework 4</title>
+    </head>
+    
+    <body>
+        <!-- Initial HTML for XML file link -->
+        <form style="text-align: center; margin-top: 100px;">
+            <p><b>Enter URL for Airlines List XML File</b></p>
+            <input type="text" id="url"><br><br>
+            <input type="button" value="Submit Query" onclick="loadXML()" style="background-color: LightGray">
+        </form>
+        
+        <!-- Javascript for processing XML document -->
+        <script language="javascript">
+            
+            var xmlDoc;
+            var htmlDoc;
+            
+            function loadXML() {
+                var url = document.getElementById('url').value.trim();
+                if (!url) {
+                    alert("Please enter a URL");
+                    return;
+                }
+                
+                if (window.XMLHttpRequest) {
+                    // Code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp = new XMLHttpRequest();
+                }
+                else {
+                    // Code for IE6, IE5
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                
+                // Open and read in XML file
+                try {
+                    xmlhttp.open("GET", url, false);
+                    xmlhttp.send();
+                } catch (error) {
+                    alert("Could not open XML file");
+                    return;
+                }
+                
+                // Validate the XML doc
+                xmlDoc = xmlhttp.responseXML;
+                if (xmlhttp.status == 404) {
+                    alert("File does not exist");
+                    return;
+                }
+                if (!xmlDoc) {
+                    alert("Error in XML file");
+                    return;
+                }
+//                var parser = new DOMParser();
+//                var doc = parser.parseFromString(xmlDoc, "text/xml");
+//                console.log(doc);
+//                if (doc.getElementsByTagName('parsererror').length > 0) {
+//                    alert("Error in XML file");
+//                    return;
+//                }
+                
+                console.log(xmlDoc);
+                parseXML(xmlDoc);
+            }
+            
+            function parseXML(xmlDoc) {
+                
+                htmlDoc = "<html><body>";
+                htmlDoc += "<table border='1' style='width: 100%;'>";
+                
+                // Parse header
+                var header = xmlDoc.getElementsByTagName("Header")[0];
+                var headerData = header.getElementsByTagName("Data");
+                htmlDoc += "<tr>";
+                for (var i = 0; i < headerData.length; i++) {
+                    htmlDoc += "<th>";
+                    if (headerData[i].childNodes.length > 0) {
+                        htmlDoc += headerData[i].childNodes[0].nodeValue.trim();
+                    }
+                    htmlDoc += "</th>";
+                }
+                htmlDoc += "</tr>";
+                
+                // Parse rows
+                var rows = xmlDoc.getElementsByTagName("Row");
+                if (rows.length == 0) {
+                    alert("XML file contains no airline companies");
+                    return;
+                }
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    htmlDoc += "<tr>";
+                    
+                    // Airline tag
+                    var airline = row.getElementsByTagName("Airline")[0];
+                    htmlDoc += "<td>";
+                    if (airline.childNodes.length > 0) {
+                        htmlDoc += airline.childNodes[0].nodeValue.trim();
+                    }
+                    htmlDoc += "</td>";
+                    
+                    // IATA tag
+                    var IATA = row.getElementsByTagName("IATA")[0];
+                    htmlDoc += "<td>";
+                    if (IATA.childNodes.length > 0) {
+                        htmlDoc += IATA.childNodes[0].nodeValue.trim();
+                    }
+                    htmlDoc += "</td>";
+                    
+                    // Hubs tag
+                    var hubs = row.getElementsByTagName("Hubs")[0];
+                    var hubsData = hubs.getElementsByTagName("Hub");
+                    htmlDoc += "<td><ul>";
+                    for (var j = 0; j < hubsData.length; j++) {
+                        htmlDoc += "<li>";
+                        if (j == 0) {
+                            htmlDoc += "<b>";
+                        }
+                        if (hubsData[j].childNodes.length > 0) {
+                            var hub = hubsData[j].childNodes[0].nodeValue;
+                            htmlDoc += hub.trim();
+                        }
+                        if (j == 0) {
+                            htmlDoc += "</b>";
+                        }
+                        htmlDoc += "</li>";
+                    }
+                    htmlDoc += "</ul></td>";
+                    
+                    // Notes tag
+                    var notes = row.getElementsByTagName("Notes")[0];
+                    htmlDoc += "<td>";
+                    if (notes.childNodes.length > 0) {
+                        htmlDoc += notes.childNodes[0].nodeValue.trim();
+                    }
+                    htmlDoc += "</td>";
+                    
+                    // HomePage tag
+                    var homePage = row.getElementsByTagName("HomePage")[0];
+                    htmlDoc += "<td>";
+                    if (homePage.childNodes.length > 0) {
+                        var link = homePage.childNodes[0].nodeValue;
+                        htmlDoc += "<a href='" + link + "'>" + link.trim() + "</a>";
+                    }
+                    htmlDoc += "</td>";
+                    
+                    // Plane tag
+                    var plane = row.getElementsByTagName("Plane")[0];
+                    htmlDoc += "<td>";
+                    if (plane.childNodes.length > 0) {
+                        var src = plane.childNodes[0].nodeValue;
+                        htmlDoc += "<img src='" + src.trim() + "' style='display: block; max-width: 300px; width: auto; height: auto;'";
+                    }
+                    htmlDoc += "</td>";
+                    
+                    htmlDoc += "</tr>";
+                }
+                
+                htmlDoc += "</table>";
+                htmlDoc += "<noscript></body></html>";
+                
+                // Display as HTML
+                displayHTML(htmlDoc);
+            }
+            
+            function displayHTML(htmlDoc) {
+                var win = window.open("", "_blank", "height=700, width=1000, resizable=yes, scrollbars=yes");
+                win.document.write(htmlDoc);
+            }
+        </script>
+    <noscript></body>
+</html>
