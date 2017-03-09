@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Facebook Search</title>
+        <script language="JavaScript">
+            // Shows the location and distance fields when "Places" is selected
+            function showPlacesFields() {
+                document.getElementById("places_fields").innerHTML =
+                    "<td><label for='location'>Location:</label></td><td><input type='text' name='location' required></td><td><label for='distance'>Distance (meters):</label></td><td><input type='text' name='distance' required></td>";
+            }
+            
+            // Sends search request to server
+            function sendSearchRequest() {
+                
+            }
+            
+            function clearFormFields() {
+                if (document.searchform.type.selectedIndex == 4) {
+                    document.getElementById("places_fields").innerHTML = "";
+                }
+                document.getElementById("searchform").reset();
+            }
+        </script>
+    </head>
+    <body>
+        <h2 style="text-align: center;"><i>Facebook Search</i></h2><hr>
+        <form name="searchform" id="searchform" method="POST" action="/cgi-bin/temp.cgi">
+            <table>
+                <tr><td><label for="keyword">Keyword:</label></td>
+                    <td><input type="text" name="keyword" id="keyword" required></td></tr>
+                <tr><td><label for="type">Type:</label></td>
+                    <td><select name="type" onchange="if (this.selectedIndex == 4) showPlacesFields();" required>
+                            <option selected>Users</option>
+                            <option>Pages</option>
+                            <option>Events</option>
+                            <option>Groups</option>
+                            <option>Places</option>
+                        </select></td></tr>
+                <tr id="places_fields"></tr>
+                <tr><td></td><td>
+                    <input type="submit" value="Search" onclick="sendSearchRequest()">
+                    <input type="reset" value="Clear" onclick="clearFormFields()"></td></tr>
+            </table>
+            
+        </form>
+    </body>
+</html>
