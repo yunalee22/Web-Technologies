@@ -24,7 +24,7 @@
     </head>
     <body>
         <h2 style="text-align: center;"><i>Facebook Search</i></h2><hr>
-        <form name="searchform" id="searchform" method="POST" action="/cgi-bin/temp.cgi">
+        <form name="searchform" id="searchform" method="post" action="/cgi-bin/temp.cgi">
             <table>
                 <tr><td><label for="keyword">Keyword:</label></td>
                     <td><input type="text" name="keyword" id="keyword" required></td></tr>
@@ -41,7 +41,6 @@
                     <input type="submit" value="Search" onclick="sendSearchRequest()">
                     <input type="reset" value="Clear" onclick="clearFormFields()"></td></tr>
             </table>
-            
         </form>
     </body>
 </html>
